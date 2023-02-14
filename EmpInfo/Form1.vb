@@ -1,4 +1,6 @@
 ﻿Imports System.Data.OleDb
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.Tab
+
 Public Class Form1
     Sub view()
         Dim conn As New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\HPX\OneDrive\Desktop\VB_Journal\EmpInfo\EmpInfoDB.accdb")
@@ -71,6 +73,8 @@ Public Class Form1
         cmd.CommandText = "delete from info where empNo= " & txtENo.Text & " "
         cmd.ExecuteNonQuery()
         MsgBox("Record deleted successfully!")
+
+
         conn.Close()
         view()
     End Sub
@@ -82,13 +86,22 @@ Public Class Form1
         Dim ds As New DataSet()
         adp.Fill(ds, "info")
         GridView.DataSource = ds.Tables("info")
+
+        Dim sql As String = " select * from info where empNo=" & txtENo.Text & " "
+        Using cmd As New OleDbCommand(sql, conn)
+            Dim reader As OleDbDataReader = cmd.ExecuteReader()
+            While reader.Read()
+                txtENo.Text = reader("empNo").ToString()
+                txtENm.Text = reader("empName").ToString()
+                txtCt.Text = reader("city").ToString()
+                txtDoj.Text = reader("DOJ").ToString()
+                txtdept.Text = reader("department").ToString()
+                txtSal.Text = reader("salary").ToString()
+            End While
+        End Using
+
         conn.Close()
-        txtCt.Clear()
-        txtdept.Clear()
-        txtDoj.Clear()
-        txtENm.Clear()
-        txtENo.Clear()
-        txtSal.Clear()
+
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
